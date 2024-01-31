@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class MeshGenerator
 {
-    public enum Directions
+    public enum MeshDirection
     {
         Top,
         Bottom,
@@ -13,63 +13,167 @@ public static class MeshGenerator
         Front,
         Back
     }
+    public enum Meshtype
+    {
+        Triangle,
+        Quad,
+        Cube,
+        Chunk
+    }
 
-    public static Mesh BuildQuadMesh(Vector3 worldPosition, Directions direction, float quadSize)
+    public static Mesh BuildTriangleMesh(Vector3 worldPosition, MeshDirection direction, float triangleSize)
+    {
+        // Vertex offset
+        float offset = 0.5f * triangleSize;
+
+        Vector3[] vertices;
+
+        // Vertex positions
+        if (direction == MeshDirection.Top)
+        {
+            // Vertex positions
+            vertices = new Vector3[]
+            {
+                // Top face
+                new Vector3(offset, offset, offset) + worldPosition, // Position 0
+                new Vector3(offset, offset, -offset) + worldPosition, // Position 1
+                new Vector3(-offset, offset, offset) + worldPosition, // Position 2
+            };
+        }
+        else if (direction == MeshDirection.Bottom)
+        {
+            // Vertex positions
+            vertices = new Vector3[]
+            {
+                // Bottom face
+                new Vector3(-offset, -offset, offset) + worldPosition, // Position 0
+                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 1
+                new Vector3(offset, -offset, offset) + worldPosition, // Position 2
+            };
+        }
+        else if (direction == MeshDirection.Left)
+        {
+            // Vertex positions
+            vertices = new Vector3[]
+            {
+                // Left face
+                new Vector3(-offset, -offset, offset) + worldPosition, // Position 0
+                new Vector3(-offset, offset, offset) + worldPosition, // Position 1
+                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 2
+            };
+        }
+        else if (direction == MeshDirection.Right)
+        {
+            // Vertex positions
+            vertices = new Vector3[]
+            {
+                // Right face
+                new Vector3(offset, -offset, -offset) + worldPosition, // Position 0
+                new Vector3(offset, offset, -offset) + worldPosition, // Position 1
+                new Vector3(offset, -offset, offset) + worldPosition, // Position 2
+            };
+        }
+        else if (direction == MeshDirection.Front)
+        {
+            // Vertex positions
+            vertices = new Vector3[]
+            {
+                // Front face
+                new Vector3(offset, -offset, offset) + worldPosition, // Position 0
+                new Vector3(offset, offset, offset) + worldPosition, // Position 1
+                new Vector3(-offset, -offset, offset) + worldPosition, // Position 2
+            };
+        }
+        else if (direction == MeshDirection.Back)
+        {
+            // Vertex positions
+            vertices = new Vector3[]
+            {
+                // Back face
+                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 0
+                new Vector3(-offset, offset, -offset) + worldPosition, // Position 1
+                new Vector3(offset, -offset, -offset) + worldPosition, // Position 2
+            };
+        }
+        else
+        {
+            Debug.Log("Error building triangle mesh");
+            return new Mesh();
+        }
+
+        // Triangle indices, clockwise for front facing
+        int[] trianglePositions = new int[]
+        {
+            0, 1, 2, // Triangle 0
+        };
+
+        // Create new mesh
+        Mesh triangleMesh = new Mesh();
+
+        // Assign vertices and triangles to the new mesh
+        triangleMesh.vertices = vertices;
+        triangleMesh.triangles = trianglePositions;
+
+        // Return the new mesh
+        return triangleMesh;
+    }
+    public static Mesh BuildQuadMesh(Vector3 worldPosition, MeshDirection direction, float quadSize)
     {
         // Vertex offset
         float offset = 0.5f * quadSize;
 
         Vector3[] vertices;
 
-        if (direction == Directions.Top)
+        // Vertex positions
+        if (direction == MeshDirection.Top)
         {
             // Vertex positions
             vertices = new Vector3[]
             {
                 // Top face
-                new Vector3(offset, offset, offset) + worldPosition, // Position 16
-                new Vector3(offset, offset, -offset) + worldPosition, // Position 17
-                new Vector3(-offset, offset, offset) + worldPosition, // Position 18
-                new Vector3(-offset, offset, -offset) + worldPosition, // Position 19
+                new Vector3(offset, offset, offset) + worldPosition, // Position 0
+                new Vector3(offset, offset, -offset) + worldPosition, // Position 1
+                new Vector3(-offset, offset, offset) + worldPosition, // Position 2
+                new Vector3(-offset, offset, -offset) + worldPosition, // Position 3
             };
         }
-        else if (direction == Directions.Bottom)
+        else if (direction == MeshDirection.Bottom)
         {
             // Vertex positions
             vertices = new Vector3[]
             {
                 // Bottom face
-                new Vector3(-offset, -offset, offset) + worldPosition, // Position 20
-                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 21
-                new Vector3(offset, -offset, offset) + worldPosition, // Position 22
-                new Vector3(offset, -offset, -offset) + worldPosition, // Position 23
+                new Vector3(-offset, -offset, offset) + worldPosition, // Position 0
+                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 1
+                new Vector3(offset, -offset, offset) + worldPosition, // Position 2
+                new Vector3(offset, -offset, -offset) + worldPosition, // Position 3
             };
         }
-        else if (direction == Directions.Left)
+        else if (direction == MeshDirection.Left)
         {
             // Vertex positions
             vertices = new Vector3[]
             {
                 // Left face
-                new Vector3(-offset, -offset, offset) + worldPosition, // Position 8
-                new Vector3(-offset, offset, offset) + worldPosition, // Position 9
-                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 10
-                new Vector3(-offset, offset, -offset) + worldPosition, // Position 11
+                new Vector3(-offset, -offset, offset) + worldPosition, // Position 0
+                new Vector3(-offset, offset, offset) + worldPosition, // Position 1
+                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 2
+                new Vector3(-offset, offset, -offset) + worldPosition, // Position 3
             };
         }
-        else if (direction == Directions.Right)
+        else if (direction == MeshDirection.Right)
         {
             // Vertex positions
             vertices = new Vector3[]
             {
                 // Right face
-                new Vector3(offset, -offset, -offset) + worldPosition,
-                new Vector3(offset, offset, -offset) + worldPosition,
-                new Vector3(offset, -offset, offset) + worldPosition,
-                new Vector3(offset, offset, offset) + worldPosition,
+                new Vector3(offset, -offset, -offset) + worldPosition, // Position 0
+                new Vector3(offset, offset, -offset) + worldPosition, // Position 1
+                new Vector3(offset, -offset, offset) + worldPosition, // Position 2
+                new Vector3(offset, offset, offset) + worldPosition, // Position 3
             };
         }
-        else if (direction == Directions.Front)
+        else if (direction == MeshDirection.Front)
         {
             // Vertex positions
             vertices = new Vector3[]
@@ -81,16 +185,16 @@ public static class MeshGenerator
                 new Vector3(-offset, offset, offset) + worldPosition, // Position 3
             };
         }
-        else if (direction == Directions.Back)
+        else if (direction == MeshDirection.Back)
         {
             // Vertex positions
             vertices = new Vector3[]
             {
                 // Back face
-                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 4
-                new Vector3(-offset, offset, -offset) + worldPosition, // Position 5
-                new Vector3(offset, -offset, -offset) + worldPosition, // Position 6
-                new Vector3(offset, offset, -offset) + worldPosition, // Position 7
+                new Vector3(-offset, -offset, -offset) + worldPosition, // Position 0
+                new Vector3(-offset, offset, -offset) + worldPosition, // Position 1
+                new Vector3(offset, -offset, -offset) + worldPosition, // Position 2
+                new Vector3(offset, offset, -offset) + worldPosition, // Position 3
             };
         }
         else
