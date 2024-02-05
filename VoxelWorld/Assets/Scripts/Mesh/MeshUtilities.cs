@@ -4,129 +4,76 @@ using UnityEngine;
 
 public static class MeshUtilities
 {
-    public static Mesh MergeQuads(List<Mesh> quadsToMerge)
+    // Noise settings
+    private static float frequency = 0.1f; // Controls the frequency of hills and valleys
+    private static float amplitude = 10f; // Controls the height of the hills and valleys
+    private static float scale = 1; // Controls the scale of the noise
+
+    public static void ChangeNoiseSettings(float frequency, float amplitude, float scale)
     {
-        // Create lists for vertices and triangles
+        MeshUtilities.frequency = frequency;
+        MeshUtilities.amplitude = amplitude;
+        MeshUtilities.scale = scale;
+    }
+
+    public static float GenerateNoise(float x, float z)
+    {
+        if (scale <= 0)
+        {
+            scale = 0.0001f; // Avoid division by zero by setting a minimal scale value
+        }
+
+        float sineX = Mathf.Sin(x * frequency) * amplitude;
+        float sineZ = Mathf.Sin(z * frequency) * amplitude;
+
+        // Perlin noise for more natural variations
+        float sampleX = x / scale * frequency;
+        float sampleZ = z / scale * frequency;
+        float perlinValue = Mathf.PerlinNoise(sampleX, sampleZ) * amplitude;
+
+        // Combine sine wave and Perlin noise
+        float noiseValue = (sineX + sineZ + perlinValue);
+
+        return noiseValue;
+    }
+
+    public static Mesh MergeMeshes(List<Mesh> meshesToMerge)
+    {
+        // Create lists for vertices, normals, uvs, and triangles
         List<Vector3> vertices = new List<Vector3>();
+        List<Vector3> normals = new List<Vector3>();
+        List<Vector2> uvs = new List<Vector2>();
         List<int> triangles = new List<int>();
 
         // Index for offsetting triangle indices
         int processedVertices = 0;
 
         // Process each mesh
-        foreach (Mesh quadMesh in quadsToMerge)
+        foreach (Mesh quadMesh in meshesToMerge)
         {
-            // Cycle through each vertex
-            for (int i = 0; i < quadMesh.vertices.Length; i++)
+            if (quadMesh == null) continue;
+
+            // Process mesh vertices, normals, and uvs
+            vertices.AddRange(quadMesh.vertices);
+            normals.AddRange(quadMesh.normals);
+            uvs.AddRange(quadMesh.uv);
+
+            // Add and offset triangle indices
+            foreach (int index in quadMesh.triangles)
             {
-                // Add vertex to list
-                vertices.Add(quadMesh.vertices[i]);
+                triangles.Add(index + processedVertices);
             }
 
-            // Cuyxle through each triangle index
-            for (int i = 0; i < quadMesh.triangles.Length; i++)
-            {
-                // Add triangle index to list
-                triangles.Add(quadMesh.triangles[i] + processedVertices);
-            }
-
-            // Increment indesx for next mesh, to offset triangle indices
+            // Update offset for next mesh
             processedVertices += quadMesh.vertices.Length;
         }
 
-        // Create new mesh
-        Mesh mergedMesh = new Mesh();
-
-        // Assign vertices and triangles
-        mergedMesh.vertices = vertices.ToArray();
-        mergedMesh.triangles = triangles.ToArray();
-
-        // Return the new mesh
-        return mergedMesh;
-    }
-    public static Mesh MergeCubes(List<Mesh> cubesToMerge)
-    {
-        // Create lists for vertices and triangles
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
-
-        // Index for offsetting triangle indices
-        int processedVertices = 0;
-
-        // Process each mesh
-        foreach (Mesh quadMesh in cubesToMerge)
-        {
-            // Cycle through each vertex
-            for (int i = 0; i < quadMesh.vertices.Length; i++)
-            {
-                // Add vertex to list
-                vertices.Add(quadMesh.vertices[i]);
-            }
-
-            // Cycle through each triangle index
-            for (int i = 0; i < quadMesh.triangles.Length; i++)
-            {
-                // Add triangle index to list
-                triangles.Add(quadMesh.triangles[i] + processedVertices);
-            }
-
-            // Increment index for next mesh, to offset triangle indices
-            processedVertices += quadMesh.vertices.Length;
-        }
-
-        // Create new mesh
-        Mesh mergedMesh = new Mesh();
-
-        // Assign vertices and triangles
-        mergedMesh.vertices = vertices.ToArray();
-        mergedMesh.triangles = triangles.ToArray();
-
-        // Return the new mesh
-        return mergedMesh;
-    }
-    public static Mesh MergeCubesClean(List<Mesh> cubesToMerge)
-    {
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
-
-        // Dictionary to map from old vertex indices to new indices
-        Dictionary<int, int> vertexMapping = new Dictionary<int, int>();
-
-        // Process meshes
-        foreach (Mesh cubeMesh in cubesToMerge)
-        {
-            // Loop through vertices
-            for (int i = 0; i < cubeMesh.vertices.Length; i++)
-            {
-                Vector3 vertex = cubeMesh.vertices[i];
-
-                // Check if vertex already exists
-                if (!vertices.Contains(vertex))
-                {
-                    // if it doesn't, add it to the list and map the index
-                    vertices.Add(vertex);
-                    vertexMapping[i] = vertices.Count - 1;
-                }
-                else
-                {
-                    // if it does, retrieve the index from the existing vertex
-                    vertexMapping[i] = vertices.IndexOf(vertex);
-                }
-            }
-
-            // Adjust the triangle indices based on the vertex mapping
-            for (int i = 0; i < cubeMesh.triangles.Length; i++)
-            {
-                int oldVertexIndex = cubeMesh.triangles[i];
-                int newVertexIndex = vertexMapping[oldVertexIndex];
-                triangles.Add(newVertexIndex);
-            }
-        }
-
+        // Create and assign new mesh
         Mesh mergedMesh = new Mesh();
         mergedMesh.vertices = vertices.ToArray();
+        mergedMesh.normals = normals.ToArray();
+        mergedMesh.uv = uvs.ToArray();
         mergedMesh.triangles = triangles.ToArray();
-
         return mergedMesh;
     }
 }

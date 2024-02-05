@@ -1,27 +1,34 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SuperChunk : MonoBehaviour
 {
-    [Header("Display")]
-    [SerializeField] private List<GameObject> chunks;
+    private List<GameObject> chunks = new List<GameObject>();
+    private Vector3 superChunkSize;
+    private Vector3 chunkSize;
+    private float cubeSize;
+    private GameObject chunkPrefab;
+    private Material material;
 
-    [Header("SuperChunk Settings")]
-    [SerializeField] private Vector3 superChunkSize;
+    private float buildDelay;
+    private float chunkBuildDelay;
 
-    [Header("Chunk Settings")]
-    [SerializeField] private GameObject chunkPrefab;
-    [SerializeField] private Vector3 chunkSize;
-    [SerializeField] private float cubeSize;
-    [SerializeField] private Material material;
-
-    private void Start()
+    public void BuildSuperChunk(Vector3 superChunkSize, Vector3 chunkSize, float cubeSize, GameObject chunkPrefab, Material material, float buildDelay, float chunkBuildDelay)
     {
-        BuildSuperChunk();
+        this.superChunkSize = superChunkSize;
+        this.chunkSize = chunkSize;
+        this.cubeSize = cubeSize;
+        this.chunkPrefab = chunkPrefab;
+        this.material = material;
+        this.buildDelay = buildDelay;
+        this.chunkBuildDelay = chunkBuildDelay;
+
+        StartCoroutine(BuildSuperChunkRoutine());
     }
 
-    private void BuildSuperChunk()
+    private IEnumerator BuildSuperChunkRoutine()
     {
         for (int x = 0; x < superChunkSize.x; x++)
         {
@@ -29,13 +36,19 @@ public class SuperChunk : MonoBehaviour
             {
                 for (int z = 0; z < superChunkSize.z; z++)
                 {
-                    Vector3 chunkPosition = transform.position + (new Vector3(x * chunkSize.x, y * chunkSize.y, z * chunkSize.z) * cubeSize) / 2;
+                    float chunkX = x * chunkSize.x * cubeSize;
+                    float chunkY = y * chunkSize.y * cubeSize;
+                    float chunkZ = z * chunkSize.z * cubeSize;
+                    Vector3 chunkPosition = transform.position + (new Vector3(chunkX, chunkY, chunkZ) / 2);
 
-                    GameObject chunk = Instantiate(chunkPrefab, chunkPosition, Quaternion.identity);
-                    chunk.transform.parent = transform;
+                    GameObject chunk = Instantiate(chunkPrefab, chunkPosition, chunkPrefab.transform.rotation, transform);
+                    chunk.name = $"Chunk {chunkPosition}";
+                    Chunk chunkScript = chunk.GetComponent<Chunk>();
 
-                    chunk.GetComponent<Chunk>().BuildChunk(chunkPosition, chunkSize, cubeSize, material);
+                    chunkScript.BuildChunk(chunkSize, cubeSize, material, chunkBuildDelay);
                     chunks.Add(chunk);
+
+                    yield return TimeSpan.FromSeconds(buildDelay);
                 }
             }
         }

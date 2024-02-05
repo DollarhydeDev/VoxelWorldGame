@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6915345493205652983
+--- !u!1 &7177578129221503595
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5796665682184172382}
-  - component: {fileID: 5358842993720945502}
+  - component: {fileID: 2959538551175937789}
+  - component: {fileID: 8450775309318990991}
   m_Layer: 0
-  m_Name: Chunk
+  m_Name: SuperChunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5796665682184172382
+--- !u!4 &2959538551175937789
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6915345493205652983}
+  m_GameObject: {fileID: 7177578129221503595}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,17 +32,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5358842993720945502
+--- !u!114 &8450775309318990991
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6915345493205652983}
+  m_GameObject: {fileID: 7177578129221503595}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 305b66f9ee00ce44c986cd394ef651b3, type: 3}
+  m_Script: {fileID: 11500000, guid: f02310f0f1f5fa142baf0d3d20eb5b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  swapToMainMesh: 0
-  swapToSecondMesh: 0
+  chunks: []
+  chunkMeshes: []
+  superChunkSize: {x: 5, y: 5, z: 5}
+  chunkPrefab: {fileID: 6915345493205652983, guid: 06ba57d296234934e95b3ff6c74ed528,
+    type: 3}
+  chunkSize: {x: 5, y: 5, z: 5}
+  cubeSize: 1
+  surfaceHeight: 10
+  material: {fileID: 2100000, guid: 125451d98a3eabd44bfb3cd5c9ed249a, type: 2}
+  frequency: 0.1
+  amplitude: 10
+  octaves: 4
+  lacunarity: 2
+  persistence: 1
+  scale: 15
