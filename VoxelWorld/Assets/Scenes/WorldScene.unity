@@ -977,7 +977,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   worldSize: {x: 5, y: 1, z: 5}
   superChunkSize: {x: 5, y: 2, z: 5}
-  chunkSize: {x: 5, y: 5, z: 5}
+  chunkSize: {x: 5, y: 3, z: 5}
   cubeSize: 1
   worldBuildDelay: 0.1
   superChunkBuildDelay: 0.1
